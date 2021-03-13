@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<body>
+    <!-- Preloader Start -->
+    <main>
+
+        <!-- slider Area Start -->
+        <div class="slider-area ">
+            <!-- Mobile Menu -->
+            <div class="slider-active">
+                <div class="single-slider slider-height" data-background="assets/img/hero/h1_hero.jpg">
+                    <div class="container">
+                        <div class="row d-flex align-items-center justify-content-between">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 d-none d-md-block">
+                                <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
+                                    <img src="assets/img/hero/hero_man.png" alt="">
+                                </div>
+                            </div>
+                            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-8">
+                                <div class="hero__caption">
+                                    <span data-animation="fadeInRight" data-delay=".4s">60% Discount</span>
+                                    <h1 data-animation="fadeInRight" data-delay=".6s">Winter <br> Collection</h1>
+                                    <p data-animation="fadeInRight" data-delay=".8s">Best Cloth Collection By 2020!</p>
+                                    <!-- Hero-btn -->
+                                    <div class="hero__btn" data-animation="fadeInRight" data-delay="1s">
+                                        <a asp-controller="Products" asp-action="Index" class="btn hero-btn">Shop Now </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="single-slider slider-height" data-background="assets/img/hero/h1_hero.jpg">
+                    <div class="container">
+                        <div class="row d-flex align-items-center justify-content-between">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 d-none d-md-block">
+                                <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
+                                    <img src="assets/img/hero/hero_man.png" alt="">
+                                </div>
+                            </div>
+                            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-8">
+                                <div class="hero__caption">
+                                    <span data-animation="fadeInRight" data-delay=".4s">60% Discount</span>
+                                    <h1 data-animation="fadeInRight" data-delay=".6s">Winter <br> Collection</h1>
+                                    <p data-animation="fadeInRight" data-delay=".8s">Best Cloth Collection By 2020!</p>
+                                    <!-- Hero-btn -->
+                                    <div class="hero__btn" data-animation="fadeInRight" data-delay="1s">
+                                        <a asp-controller="Products" asp-action="Index" class="btn hero-btn">Shop Now </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Shop Method End-->
+        <!-- Gallery Start-->
+        <div class="gallery-wrapper lf-padding">
+            <div class="gallery-area">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="gallery-items">
+                            <img src="assets/img/gallery/gallery1.jpg" alt="">
+                        </div>
+                        <div class="gallery-items">
+                            <img src="assets/img/gallery/gallery2.jpg" alt="">
+                        </div>
+                        <div class="gallery-items">
+                            <img src="assets/img/gallery/gallery3.jpg" alt="">
+                        </div>
+                        <div class="gallery-items">
+                            <img src="assets/img/gallery/gallery4.jpg" alt="">
+                        </div>
+                        <div class="gallery-items">
+                            <img src="assets/img/gallery/gallery5.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Gallery End-->
+
+    </main>
+    <a class="weatherwidget-io" href="https://forecast7.com/en/31d0534d85/israel/" data-label_1="ISRAEL" data-label_2="WEATHER" data-theme="original">ISRAEL WEATHER</a>
+    <script>
+        !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+    </script>
+
+
+
+
+    <!-- Create a div where the graph will take place -->
+    <h2>Amount of products in each category</h2>
+
+    <div id="my_dataviz"></div>
+
+    <script>
+
+        // create 2 data_set
+        var data1 = [
+            
+           @foreach (KeyValuePair<string, int> c in ViewBag.graph1)
+           {
+               @:{ group: "@c.Key.ToString()", value: @c.Value },
+           }
+        ];
+
+
+
+                        // set the dimensions and margins of the graph
+                        var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+                        // append the svg object to the body of the page
+                        var svg = d3.select("#my_dataviz")
+                            .append("svg")
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform",
+                                "translate(" + margin.left + "," + margin.top + ")");
+
+                        // X axis
+                        var x = d3.scaleBand()
+                            .range([0, width])
+            .domain(data1.map(function (d) { return d.group; }))
+            .padding(0.2);
+                        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+
+        // Add Y axis
+                        var y = d3.scaleLinear()
+            .domain([0, 20])
+            .range([height, 0]);
+                        svg.append("g")
+            .attr("class", "myYaxis")
+            .call(d3.axisLeft(y));
+
+                        // A function that create / update the plot for a given variable:
+                        function update(data) {
+
+                            var u = svg.selectAll("rect")
+                                .data(data)
+
+
+
+
+            u
+                .enter()
+                .append("rect")
+                .merge(u)
+                .transition()
+                .duration(1000)
+                .attr("x", function (d) { return x(d.group); })
+                .attr("y", function (d) { return y(d.value); })
+                .attr("width", x.bandwidth())
+                .attr("height", function (d) { return height - y(d.value); })
+                .attr("fill", "#69b3a2")
+                            }
+
+                        // Initialize the plot with the first dataset
+                        update(data1)
+
+    </script>
+
+
+
+
+
+
+
+
+    <h2>Amount of purchases in each category</h2>
+
+    <div id="my_dataviz2"></div>
+
+    <script>
+
+        // create 2 data_set
+        var data2 = [
+           @foreach (KeyValuePair<string, int> c in ViewBag.graph2)
+           {
+               @:{ group: "@c.Key.ToString()", value: @c.Value },
+           }
+        ];
+
+
+
+                // set the dimensions and margins of the graph
+                var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+                // append the svg object to the body of the page
+                var svg = d3.select("#my_dataviz2")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
+
+                // X axis
+                var x = d3.scaleBand()
+                    .range([0, width])
+            .domain(data2.map(function (d) { return d.group; }))
+            .padding(0.2);
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x))
+
+        // Add Y axis
+                var y = d3.scaleLinear()
+            .domain([0, 20])
+            .range([height, 0]);
+                svg.append("g")
+                    .attr("class", "myYaxis")
+                    .call(d3.axisLeft(y));
+
+                // A function that create / update the plot for a given variable:
+                function update(data) {
+
+                    var u = svg.selectAll("rect")
+                        .data(data)
+
+
+
+
+            u
+                .enter()
+                .append("rect")
+                .merge(u)
+                .transition()
+                .duration(1000)
+                .attr("x", function (d) { return x(d.group); })
+                .attr("y", function (d) { return y(d.value); })
+                .attr("width", x.bandwidth())
+                .attr("height", function (d) { return height - y(d.value); })
+                .attr("fill", "#69b3a2")
+        }
+
+        // Initialize the plot with the first dataset
+        update(data2)
+
+    </script>
+
+</body>
